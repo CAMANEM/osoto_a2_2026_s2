@@ -7,9 +7,9 @@
 #include "visual/Renderer.hpp"
 
 int main() {
-    const int boidCount = 150;
-    const int windowWidth = 900;
-    const int windowHeight = 700;
+    const int boidCount = 250;
+    const int windowWidth = 1200;
+    const int windowHeight = 800;
 
     const FlockingConfig config(boidCount, static_cast<double>(windowWidth),
                                  static_cast<double>(windowHeight),

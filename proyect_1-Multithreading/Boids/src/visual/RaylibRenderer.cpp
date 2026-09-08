@@ -17,7 +17,7 @@ public:
 
     void beginDrawing() override {
         BeginDrawing();
-        ClearBackground({10, 12, 30});
+        DrawRectangle(0, 0, width_, height_, Color{10, 12, 30, 100});
     }
 
     void drawFlock(const Flock& flock) override {
@@ -68,10 +68,12 @@ public:
             v3.y = baseCenterY - perpY * halfBase;
 
             Color col;
-            col.r = 120;
-            col.g = 220;
-            col.b = 255;
-            col.a = 255;
+            const float speed = static_cast<float>(boid.getVelocity().magnitude());
+            const float t = (speed < 3.0f) ? speed / 3.0f : 1.0f;
+            col.r = static_cast<unsigned char>(80 + t * 175);
+            col.g = static_cast<unsigned char>(180 + t * 40);
+            col.b = static_cast<unsigned char>(255 - t * 50);
+            col.a = 220;
 
             DrawTriangle(v1, v2, v3, col);
             DrawTriangle(v1, v3, v2, col);
