@@ -36,7 +36,7 @@ bool SteeringContext::stepOnce() {
         ++neighborCount_;
 
         if (distance < config_->getSeparationRadius()) {
-            separationSum_ += offset * (1.0 / distance);
+            separationSum_ += offset * (1.0 / (distance * distance));
         }
     }
 

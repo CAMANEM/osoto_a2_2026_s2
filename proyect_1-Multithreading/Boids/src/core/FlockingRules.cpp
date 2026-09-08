@@ -23,7 +23,7 @@ Vector2D FlockingRules::computeSteeringForBoid(int boidIndex, const Flock& flock
             ++neighborCount;
 
             if (distance < config.getSeparationRadius()) {
-                separationSum += offset * (1.0 / distance);
+                separationSum += offset * (1.0 / (distance * distance));
             }
         }
     }

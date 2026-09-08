@@ -13,10 +13,10 @@ int main() {
 
     const FlockingConfig config(boidCount, static_cast<double>(windowWidth),
                                  static_cast<double>(windowHeight),
-                                 /*perceptionRadius=*/45.0, /*separationRadius=*/25.0,
+                                 /*perceptionRadius=*/45.0, /*separationRadius=*/35.0,
                                  /*maxSpeed=*/2.6, /*maxForce=*/0.15,
-                                 /*separationWeight=*/1.8, /*alignmentWeight=*/1.2,
-                                 /*cohesionWeight=*/0.5, /*deltaTime=*/1.0);
+                                 /*separationWeight=*/4.0, /*alignmentWeight=*/0.8,
+                                 /*cohesionWeight=*/0.2, /*deltaTime=*/1.0);
 
     Renderer* renderer = createRaylibRenderer();
     if (!renderer->init(windowWidth, windowHeight, "Flocking - Sequential")) {
