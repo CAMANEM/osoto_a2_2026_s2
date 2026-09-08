@@ -3,6 +3,7 @@
 #include "raylib.h"
 
 #include <cmath>
+#include <vector>
 
 class RaylibRenderer : public Renderer {
 public:
@@ -20,21 +21,60 @@ public:
     }
 
     void drawFlock(const Flock& flock) override {
+        if (smoothedVx_.size() != static_cast<size_t>(flock.getBoidCount())) {
+            smoothedVx_.resize(flock.getBoidCount(), 0.0f);
+            smoothedVy_.resize(flock.getBoidCount(), 0.0f);
+        }
+
+        const float smoothing = 0.3f;
+
         for (int i = 0; i < flock.getBoidCount(); ++i) {
             const Boid& boid = flock.getBoid(i);
             const float cx = static_cast<float>(boid.getPosition().getX());
             const float cy = static_cast<float>(boid.getPosition().getY());
 
-            const float speed = static_cast<float>(boid.getVelocity().magnitude());
-            const unsigned char brightness = static_cast<unsigned char>(
-                120 + static_cast<int>(speed * 40.0f));
-            const Color bodyColor{brightness, 220, 255, 255};
-            DrawCircle(static_cast<int>(cx), static_cast<int>(cy), 3.0f, bodyColor);
+            const Vector2D vel = boid.getVelocity().normalized();
+            const float targetVx = static_cast<float>(vel.getX());
+            const float targetVy = static_cast<float>(vel.getY());
 
-            const Vector2D heading = boid.getVelocity().normalized();
-            const float hx = cx + static_cast<float>(heading.getX()) * 6.0f;
-            const float hy = cy + static_cast<float>(heading.getY()) * 6.0f;
-            DrawLineEx({cx, cy}, {hx, hy}, 1.5f, WHITE);
+            smoothedVx_[i] += (targetVx - smoothedVx_[i]) * smoothing;
+            smoothedVy_[i] += (targetVy - smoothedVy_[i]) * smoothing;
+
+            const float hvx = smoothedVx_[i];
+            const float hvy = smoothedVy_[i];
+            const float hmag = std::sqrt(hvx * hvx + hvy * hvy);
+            const float nvx = (hmag > 0.001f) ? hvx / hmag : targetVx;
+            const float nvy = (hmag > 0.001f) ? hvy / hmag : targetVy;
+
+            const float height = 10.0f;
+            const float halfBase = 3.5f;
+            const float baseOffset = 3.0f;
+
+            const float tipX = cx + nvx * height;
+            const float tipY = cy + nvy * height;
+            const float baseCenterX = cx - nvx * baseOffset;
+            const float baseCenterY = cy - nvy * baseOffset;
+            const float perpX = -nvy;
+            const float perpY = nvx;
+
+            Vector2 v1;
+            v1.x = tipX;
+            v1.y = tipY;
+            Vector2 v2;
+            v2.x = baseCenterX + perpX * halfBase;
+            v2.y = baseCenterY + perpY * halfBase;
+            Vector2 v3;
+            v3.x = baseCenterX - perpX * halfBase;
+            v3.y = baseCenterY - perpY * halfBase;
+
+            Color col;
+            col.r = 120;
+            col.g = 220;
+            col.b = 255;
+            col.a = 255;
+
+            DrawTriangle(v1, v2, v3, col);
+            DrawTriangle(v1, v3, v2, col);
         }
     }
 
@@ -53,6 +93,8 @@ public:
 private:
     int width_ = 0;
     int height_ = 0;
+    std::vector<float> smoothedVx_;
+    std::vector<float> smoothedVy_;
 };
 
 Renderer* createRaylibRenderer() {
