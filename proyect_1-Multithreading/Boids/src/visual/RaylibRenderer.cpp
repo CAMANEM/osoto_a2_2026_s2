@@ -46,9 +46,9 @@ public:
             const float nvx = (hmag > 0.001f) ? hvx / hmag : targetVx;
             const float nvy = (hmag > 0.001f) ? hvy / hmag : targetVy;
 
-            const float height = 10.0f;
-            const float halfBase = 3.5f;
-            const float baseOffset = 3.0f;
+            const float height = 7.0f;
+            const float halfBase = 2.5f;
+            const float baseOffset = 2.0f;
 
             const float tipX = cx + nvx * height;
             const float tipY = cy + nvy * height;
